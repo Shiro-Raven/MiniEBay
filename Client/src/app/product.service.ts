@@ -14,8 +14,8 @@ export class ProductService {
 
   private getterUrl = 'http://localhost:3000/api/product/getProducts';
   private createUrl = 'http://localhost:3000/api/product/createProduct';
-  private updateUrl = 'http://localhost:3000/api/product/updateProduct/:productId';
-  private deleteUrl = 'http://localhost:3000/api/product/deleteProduct/:productId';
+  private updateUrl = 'http://localhost:3000/api/product/updateProduct';
+  private deleteUrl = 'http://localhost:3000/api/product/deleteProduct';
 
   constructor(private http: HttpClient) { }
 
@@ -25,6 +25,18 @@ export class ProductService {
 
   addProduct(product: any): Observable<any> {
     return this.http.post<any>(this.createUrl, product, httpOptions);
+  }
+
+  editProduct(product: any): Observable<any>{
+    const id = product._id;
+    const url = `${this.updateUrl}/${id}`;
+    return this.http.patch<any>(url, product, httpOptions);
+  }
+
+  deleteProduct (prodId: any): Observable<any> {
+    const id = prodId;
+    const url = `${this.deleteUrl}/${id}`;
+    return this.http.delete<any>(url, httpOptions);
   }
 
 }

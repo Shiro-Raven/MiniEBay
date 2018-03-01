@@ -35,6 +35,7 @@ export class HeaderComponent implements OnInit {
   onMenuClick(event) {
     if (event.title === 'Logout') {
       this.service.updateUser(null);
+      this.router.navigate(['/dashboard']);
     }
     else if (event.title === 'Sign up') {
       this.router.navigate(['/dashboard/auth/register']);

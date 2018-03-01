@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { ProductService } from '../../../product.service';
 import { UserService } from '../../../user.service';
+import { Router } from '@angular/router';
+import { LocalDataSource } from 'ng2-smart-table';
 
 @Component({
   selector: 'ngx-smart-table',
@@ -11,7 +13,7 @@ import { UserService } from '../../../user.service';
     }
   `],
 })
-export class SmartTableComponent{
+export class SmartTableComponent {
 
   settings = {
     noDataMessage: this.message(),
@@ -30,6 +32,7 @@ export class SmartTableComponent{
       editButtonContent: '<i class="nb-edit"></i>',
       saveButtonContent: '<i class="nb-checkmark"></i>',
       cancelButtonContent: '<i class="nb-close"></i>',
+      confirmSave : true
     },
     delete: {
       deleteButtonContent: '<i class="nb-trash"></i>',
@@ -52,11 +55,13 @@ export class SmartTableComponent{
       createdAt: {
         title: 'Created At',
         type: 'date',
+        editable: false
 
       },
       updatedAt: {
         title: 'Last Updated At',
         type: 'date',
+        editable: false
       },
       sellerName: {
         title: 'Seller Name',
@@ -69,46 +74,62 @@ export class SmartTableComponent{
     },
   };
 
-  source: Array<any>;
+  source: LocalDataSource;
 
   constructor(private productService: ProductService,
-    private userService: UserService) {
-      this.getProducts();
+              private userService: UserService,
+              private router: Router,) {
+    this.source = new LocalDataSource();
+    this.getProducts();
   }
 
   canAdd(): boolean {
-    return true;
+    var user = this.userService.getUser();
+    if(user === null)
+      return false;
+    else
+      return user.userType === 'admin' || user.userType === 'manager';
   }
   canEdit(): boolean {
-    return true;
+    var user = this.userService.getUser();
+    if(user === null)
+      return false;
+    else
+      return user.userType === 'admin' || user.userType === 'manager';
   }
   canDelete(): boolean {
-    return true;
+    var user = this.userService.getUser();
+    if(user === null)
+      return false;
+    else
+      return user.userType === 'admin';
   }
 
-  message() : String{
-    return 'No Products in the Data Base ';
+  message(): String {
+    return 'No Products in the Data Base sold by Ahmed Darwish.';
   }
 
-  getProducts(){
+  getProducts() {
     var self = this;
-    this.productService.getProducts().subscribe(function(res){
-      if(res.msg === 'Products retrieved successfully.')
-        self.source = res.data;
+    this.productService.getProducts().subscribe(function (res) {
+      if (res.msg === 'Products retrieved successfully.'){
+        var Prods: any[] = res.data;
+        var mine: any[] = [];
+        for(var i = 0; i < Prods.length; i++){
+          Prods[i].createdAt = new Date(Prods[i].createdAt);
+          Prods[i].updatedAt = new Date(Prods[i].updatedAt);
+          if(Prods[i].sellerName === 'Ahmed Darwish')
+            mine.push(Prods[i]);
+        }
+        self.source.load(mine);
+      }
     });
   }
 
-  // Service will be used here
   onCreateConfirm(event): void {
-    if(event.newData.createdAt !== null){}
-    else{
-      event.newData.createdAt = new Date();
-    }
-
-    if(event.newData.updatedAt !== null){}
-    else{
-      event.newData.updatedAt = new Date()
-    }
+    event.newData.createdAt = new Date();
+  
+    event.newData.updatedAt = new Date()
 
     var newProd = {
       id: event.newData.id,
@@ -123,7 +144,8 @@ export class SmartTableComponent{
     var self = this;
     this.productService.addProduct(newProd).subscribe(function (res) {
       if (res.msg === 'Product was created successfully.') {
-        event.confirm.resolve();
+        if(newProd.sellerName === 'Ahmed Darwish')  
+          event.confirm.resolve(newProd);
         alert('Product Added!');
       }
     },
@@ -133,9 +155,40 @@ export class SmartTableComponent{
   }
 
 
+  onEditConfirm(event):void{
+    var prodToEdit = {
+      id: event.newData.id,
+      name: event.newData.name,
+      price: event.newData.price,
+      createdAt: event.data.createdAt,
+      updatedAt: new Date(),
+      sellerName: event.newData.sellerName,
+      stock: event.newData.stock,
+      _id: event.data._id
+    };
+
+    var self = this;
+    this.productService.editProduct(prodToEdit).subscribe(function (res) {
+      if (res.msg === 'Product was updated successfully.') {
+        if(prodToEdit.sellerName === 'Ahmed Darwish')  
+          event.confirm.resolve(res.data);
+        else
+          self.source.remove(event.data);
+        alert('Product Edited!');
+      }
+    });
+  }
+
   onDeleteConfirm(event): void {
-    // This will be edited to deleted from 
-    event.confirm.resolve();
-    alert('Product Deleted');
+    var self = this;
+    this.productService.deleteProduct(event.data._id).subscribe(function (res) {
+      if(res.msg === 'Product was deleted successfully.'){
+        console.log(res.data);
+        event.confirm.resolve();
+        alert('Product deleted!');
+      }
+    }, function (err) {
+      alert("Error");
+    });
   }
 }
