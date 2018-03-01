@@ -82,18 +82,31 @@ module.exports.createProduct = function(req, res, next) {
     });
   }
   // Security Check
-  delete req.body.createdAt;
-  delete req.body.updatedAt;
+  // delete req.body.createdAt;
+  // delete req.body.updatedAt;
 
-  Product.create(req.body, function(err, product) {
+  Product.findOne({ id: req.body.id }).exec(function (err, product) {
     if (err) {
       return next(err);
     }
-    res.status(201).json({
-      err: null,
-      msg: 'Product was created successfully.',
-      data: product
-    });
+    if (product) {
+      return res.status(422).json({
+        err: null,
+        msg: 'Product already exists',
+        data: null
+      });
+    } else {
+      Product.create(req.body, function (err, product) {
+        if (err) {
+          return next(err);
+        }
+        res.status(201).json({
+          err: null,
+          msg: 'Product was created successfully.',
+          data: product
+        });
+      });
+    }
   });
 };
 

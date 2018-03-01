@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-
-import { ItemsComponent } from './items.component';
+import { SmartTableComponent } from './smart-table/smart-table.component';
 
 const routes: Routes = [
-  { path: '', component: ItemsComponent, pathMatch: 'full' }
+  { path: '', component: SmartTableComponent, pathMatch: 'full' }
 ];
 
 @NgModule({
