@@ -8,7 +8,7 @@ export const MENU_ITEMS: NbMenuItem[] = [
     home: true
   },
   {
-    title: 'Items',
+    title: 'Store',
     icon: 'fa fa-shopping-basket',
     link: '/dashboard/items'
   },
