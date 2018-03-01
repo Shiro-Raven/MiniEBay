@@ -1,0 +1,70 @@
+<nb-card>
+  <nb-card-body>
+    <div class="flex-centered offset-xl-4 col-xl-4 offset-lg-3 col-lg-6 offset-md-2 col-md-8 col-sm-12 mt-5">
+      <h2 class="title text-center">Sign Up</h2>
+      <form (ngSubmit)="createUser()" #register="ngForm">
+
+
+        <!-- start of boxes -->
+        <div class="form-group">
+          <div>
+            <label for="name">Name</label>
+            <input type="text" id="name" class="form-control" required [(ngModel)]="formInput.fullname" name="name" #name="ngModel" required>
+            <div [hidden]="name.valid || name.untouched" class="alert text-danger">
+              Name is required
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" class="form-control" pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" ng-model="text" id="email" [(ngModel)]="formInput.emailAddress"
+            name="email" #email="ngModel" required>
+          <div [hidden]="email.valid || email.untouched" class="alert text-danger">
+            Email is required!
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" [(ngModel)]="formInput.password" name="password" #password="ngModel"
+            required>
+          <div [hidden]="password.valid || password.untouched" class="alert text-danger">
+            Password is required!
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Confirm Password</label>
+          <input type="password" class="form-control" id="confPass" [(ngModel)]="formInput.confPass" name="confPass" #confPass="ngModel"
+            required>
+          <div [hidden]="confPass.valid || confPass.untouched" class="alert text-danger">
+            Passwords entered don't match!
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="type">User Type</label>
+          <select class="form-control" id="type" required [(ngModel)]="formInput.type" name="type" #type="ngModel">
+            <option value="viewer" selected>Viewer</option>
+            <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+          </select>
+          <div [hidden]="type.valid || type.untouched" class="alert text-danger">
+            Please choose a type!
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-block btn-hero-success" [disabled]="!register.form.valid">Register</button>
+      </form>
+      <div class="form-group">
+        <small class="form-text">
+          Already have an account?
+          <a routerLink="../login">
+            <strong>Sign in</strong>
+          </a>
+        </small>
+      </div>
+    </div>
+  </nb-card-body>
+</nb-card>

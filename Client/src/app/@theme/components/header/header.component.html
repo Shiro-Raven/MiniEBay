@@ -1,0 +1,23 @@
+<div class="header-container left">
+  <div class="logo-containter">
+    <a (click)="toggleSidebar()" class="navigation">
+      <i class="nb-menu"></i>
+    </a>
+    <div class="logo" (click)="goToHome()">
+      <img src="assets/Logo(s)/ParaSite 100x100.png" alt="Parasite's Logo">
+    </div>
+  </div>
+  <ngx-theme-switcher></ngx-theme-switcher>
+</div>
+
+<nb-actions size="medium" class="header-container right">
+  <nb-action>
+    <div *ngIf="service.user">
+      <nb-user [menu]="userLogged" [name]="service.user?.fullName" [title]="service.user?.userType | ngxCapitalize" (menuClick)="onMenuClick($event)"></nb-user>
+    </div>
+    <div *ngIf="!service.user">
+      <nb-user [menu]="userForeign" [name]="service.user?.fullName" [title]="service.user?.userType | ngxCapitalize"
+        (menuClick)="onMenuClick($event)"></nb-user>
+    </div>
+  </nb-action>
+</nb-actions>
