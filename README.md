@@ -6,6 +6,5 @@
 </p>
 
 # Mini project - Sprint 1 - Individual Task
-
-## Getting Started
+## Made by:
   - [Ahmed Darwish](https://github.com/Shiro-Raven)
