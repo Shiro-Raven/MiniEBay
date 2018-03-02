@@ -3,6 +3,8 @@ import { ProductService } from '../../../product.service';
 import { UserService } from '../../../user.service';
 import { Router } from '@angular/router';
 import { LocalDataSource } from 'ng2-smart-table';
+import { DatePipe } from '@angular/common';
+import { CurrencyPipe } from '@angular/common';
 
 @Component({
   selector: 'ngx-smart-table',
@@ -40,7 +42,7 @@ export class SmartTableComponent {
     },
     columns: {
       id: {
-        title: 'ID',
+        title: 'ID #',
         type: 'number',
         editable: false
       },
@@ -50,18 +52,33 @@ export class SmartTableComponent {
       },
       price: {
         title: 'Price',
-        type: 'number'
+        type: 'number',
+        valuePrepareFunction: (price) => {
+          var formatted = this.curpipe.transform(price,'USD');
+          return formatted;
+        }
       },
       createdAt: {
         title: 'Created At',
         type: 'date',
-        editable: false
-
+        editable: false,
+        valuePrepareFunction: (date) => { 
+          var raw = new Date(date);
+  
+          var formatted = this.datepipe.transform(raw, 'dd MMM yyyy');
+          return formatted; 
+        }
       },
       updatedAt: {
         title: 'Last Updated At',
         type: 'date',
-        editable: false
+        editable: false,
+        valuePrepareFunction: (date) => { 
+          var raw = new Date(date);
+  
+          var formatted = this.datepipe.transform(raw, 'dd MMM yyyy');
+          return formatted; 
+        }
       },
       sellerName: {
         title: 'Seller Name',
@@ -78,7 +95,9 @@ export class SmartTableComponent {
 
   constructor(private productService: ProductService,
               private userService: UserService,
-              private router: Router,) {
+              private router: Router,
+              private datepipe : DatePipe,
+              private curpipe: CurrencyPipe) {
     this.source = new LocalDataSource();
     this.getProducts();
   }

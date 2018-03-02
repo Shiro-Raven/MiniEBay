@@ -9,8 +9,7 @@ var productSchema = mongoose.Schema({
   name: {
     type: String,
     required: true,
-    trim: true,
-    lowercase: true
+    trim: true
   },
   price: {
     type: Number,
